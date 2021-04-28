@@ -1,0 +1,37 @@
+version: "3"
+services:
+  mongo-prod:
+    image: mongo:latest
+    ports:
+      - "27017:27017" 
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: username #MongoDB username
+      MONGO_INITDB_ROOT_PASSWORD: password #MongoDB password
+    volumes:
+      - ./mongo/db:/data/db # Create a volume for the DB. Data persistant. 
+    # - /data/db #Not data persistant
+  client-prod:
+    build:
+      context: ./client
+      dockerfile: Dockerfile.prod
+    ports:
+      - "3000:3000"
+    restart: always
+    environment:
+      - NODE_ENV=production
+  server-prod:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.prod
+    depends_on:
+      - mongo-prod
+    environment:
+      - NODE_ENV=production
+      - MONGO_PORT=27017
+      - SERVER_PORT=8080
+      - FORCE_COLOR=1 #Colored logs on the console with the "chalk" package.
+      - MONGO_USERNAME=username
+      - MONGO_PASSWORD=password
+    ports:
+      - "8080:8080"
+    restart: always

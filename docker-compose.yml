@@ -1,0 +1,47 @@
+version: "3"
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017" 
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: username #MongoDB username
+      MONGO_INITDB_ROOT_PASSWORD: password #MongoDB password
+    volumes:
+      - ./data/db:/data/db # Create a volume for the DB. Data persistant. 
+    # - /data/db #Not data persistant
+    logging:
+      driver: none
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    restart: always
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true # Hot reloading create react app : https://mherman.org/blog/dockerizing-a-react-app/ ; https://create-react-app.dev/docs/troubleshooting/#npm-start-doesn-t-detect-changes
+    stdin_open: true # Hot reloading create react app: https://github.com/facebook/create-react-app/issues/8688#issuecomment-602110747
+    volumes: 
+      - ./client:/app #Synchronise docker container with local change
+      - /app/node_modules #Avoid re-copying local node_modules. Cache in container.
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    depends_on:
+      - mongo
+    environment:
+      - NODE_ENV=development
+      - MONGO_PORT=27017
+      - SERVER_PORT=8080
+      - MONGO_USERNAME=username 
+      - MONGO_PASSWORD=password
+      - FORCE_COLOR=1 #Colored logs on the console with the "chalk" package.
+    ports:
+      - "8080:8080"
+    restart: always
+    volumes: 
+      - ./server:/app #Synchronise docker container with local change
+      - /app/node_modules #Avoid re-copying local node_modules. Cache in container.
