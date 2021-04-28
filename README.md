@@ -20,15 +20,15 @@ Docker-compose is required.
 ```sh
 docker-compose up --build
 ```
-Access client at: localhost:3000
-Access server at: localhost:8080
-Access mongo at: localhost:27017 (username: username, password: password)
+- Access client at: localhost:3000
+- Access server at: localhost:8080
+- Access mongo at: localhost:27017 (username: username, password: password)
 
 #### How to start development environment
 
 ```sh
 docker-compose -f docker-compose-prod.yml up --build
 ```
-Access client at: localhost:3000
-Access server at: localhost:8080
-Access mongo at: localhost:27017 (username: username, password: password)
+- Access client at: localhost:3000
+- Access server at: localhost:8080
+- Access mongo at: localhost:27017 (username: username, password: password)
